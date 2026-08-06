@@ -1,18 +1,27 @@
-from application.application_layer import ApplicationLayer
+from application import ApplicationLayer
+from presentation import PresentationLayer
+#from link import LinkLayer
+#from noise import NoiseLayer
+#from transport import SocketClient
 
-#main solo para application
+#main para application y presentation
 def main():
 
-    application = ApplicationLayer()
+    app = ApplicationLayer()
+    presentation = PresentationLayer()
 
-    frame = application.request_message()
+    frame = app.request_message()
 
-    print("\n===== FRAME GENERADO =====")
-    print(f"Mensaje   : {frame.message}")
-    print(f"Algoritmo : {frame.algorithm}")
-    print(f"Puerto    : {frame.destination_port}")
-    print(f"BER       : {frame.ber}")
+    if frame is None:
+        return
 
+    frame = presentation.encode(frame)
+
+    print("\n===== FRAME =====")
+    print("Mensaje:")
+    print(frame.message)
+    print("\nPayload:")
+    print(frame.payload)
 
 if __name__ == "__main__":
     main()
