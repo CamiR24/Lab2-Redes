@@ -27,9 +27,22 @@ public class SocketServer {
         void handle(String rawPayload);
     }
 
+    /** Callbacks opcionales para que una interfaz gráfica se entere del estado del servidor. */
+    public interface StatusListener {
+        void onListening(int port);
+        void onError(String message);
+    }
+
     public void listen(FrameHandler handler) {
+        listen(handler, null);
+    }
+
+    public void listen(FrameHandler handler, StatusListener statusListener) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Receptor escuchando en el puerto " + port + "...");
+            if (statusListener != null) {
+                statusListener.onListening(port);
+            }
 
             while (true) {
                 try (Socket client = serverSocket.accept()) {
@@ -43,7 +56,11 @@ public class SocketServer {
                 System.out.println("\nEsperando la siguiente trama...");
             }
         } catch (IOException error) {
-            System.out.println("No fue posible iniciar el receptor en el puerto " + port + ": " + error.getMessage());
+            String message = "No fue posible iniciar el receptor en el puerto " + port + ": " + error.getMessage();
+            System.out.println(message);
+            if (statusListener != null) {
+                statusListener.onError(message);
+            }
         }
     }
 

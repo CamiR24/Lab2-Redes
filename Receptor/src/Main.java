@@ -1,55 +1,55 @@
 import application.ApplicationLayer;
+import application.ReceptorWindow;
 import link.LinkLayer;
 import models.Frame;
 import presentation.PresentationLayer;
 import transport.SocketServer;
 
-import java.util.Scanner;
+import javax.swing.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        int port = readPort(args);
-
         LinkLayer link = new LinkLayer();
         PresentationLayer presentation = new PresentationLayer();
         ApplicationLayer application = new ApplicationLayer();
 
-        SocketServer server = new SocketServer(port);
+        SwingUtilities.invokeLater(() -> {
+            ReceptorWindow window = new ReceptorWindow();
 
-        server.listen(rawPayload -> {
-            Frame frame = new Frame();
-            frame.rawPayload = rawPayload;
+            window.setOnStart(port -> {
+                SocketServer server = new SocketServer(port);
 
-            frame = link.verifyIntegrity(frame);
-            System.out.println("\n========== LINK ==========");
-            System.out.println("Algoritmo detectado : " + frame.algorithm);
-            System.out.println("Datos               : " + frame.dataBits);
-            System.out.println("Integridad recibida : " + frame.receivedIntegrity);
+                Thread serverThread = new Thread(() -> server.listen(
+                        rawPayload -> {
+                            Frame frame = new Frame();
+                            frame.rawPayload = rawPayload;
 
-            frame = presentation.decode(frame);
-            System.out.println("\n========== PRESENTATION ==========");
-            System.out.println(frame.corrupted && !frame.corrected ? "(no decodificable)" : frame.message);
+                            Frame processed = link.verifyIntegrity(frame);
+                            processed = presentation.decode(processed);
+                            application.showMessage(processed);
 
-            application.showMessage(frame);
+                            Frame finalFrame = processed;
+                            SwingUtilities.invokeLater(() -> window.showFrame(finalFrame));
+                        },
+                        new SocketServer.StatusListener() {
+                            @Override
+                            public void onListening(int listeningPort) {
+                                SwingUtilities.invokeLater(() -> window.showListening(listeningPort));
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                SwingUtilities.invokeLater(() -> window.showError(message));
+                            }
+                        }
+                ));
+
+                serverThread.setDaemon(true);
+                serverThread.start();
+            });
+
+            window.setVisible(true);
         });
-    }
-
-    private static int readPort(String[] args) {
-        if (args.length > 0) {
-            try {
-                return Integer.parseInt(args[0]);
-            } catch (NumberFormatException ignored) {
-                // sigue al modo interactivo
-            }
-        }
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Puerto en el que escuchará el receptor: ");
-        while (!scanner.hasNextInt()) {
-            System.out.print("Ingrese un puerto válido: ");
-            scanner.next();
-        }
-        return scanner.nextInt();
     }
 }
