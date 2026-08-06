@@ -11,7 +11,7 @@ class SocketClient:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
                 client.connect((self.host, frame.destination_port))
                 client.sendall(frame.payload.encode())
-                print("\nTrama enviada correctamente.")
+                print("\nMensaje codificado enviado correctamente.")
         except ConnectionRefusedError:
             print("\nNo fue posible conectar con el receptor.")
         except Exception as error:

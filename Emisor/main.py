@@ -19,20 +19,21 @@ def main():
 
     frame = presentation.encode(frame)
     frame.metadata["ascii"] = frame.payload
+    print("\n========== PRESENTATION ==========")
+    print(frame.payload)
 
     frame = link.add_integrity(frame)
+    print("\n========== LINK ==========")
+    print(f"Cabecera + Datos + Integridad:")
+    print(frame.payload)
+    print(f"\nCRC32:")
+    print(frame.integrity)
 
     frame = noise.apply(frame)
-
-    print("\n===== FRAME =====")
-    print(f"Mensaje              : {frame.message}")
-    print(f"Algoritmo            : {frame.algorithm.value}")
-    print(f"Puerto               : {frame.destination_port}")
-    print(f"BER                  : {frame.ber}")
-    print(f"Payload              : {frame.metadata["payload_before_noise"]}")
-    print(f"Integridad           : {frame.integrity}")
-    print(f"Payload con ruido    : {frame.payload}")
-    print(f"Bits modificados     : {frame.metadata["flipped_bits"]}")
+    print("\n========== NOISE ==========")
+    print(f"Antes : {frame.metadata['payload_before_noise']}")
+    print(f"Después: {frame.payload}")
+    print(f"Bits modificados: {frame.metadata['flipped_bits']}")
 
     transport.send(frame)
 
