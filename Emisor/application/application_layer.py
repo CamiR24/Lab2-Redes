@@ -1,4 +1,4 @@
-from models.frame import Frame
+from models.frame import Frame, Algorithm
 from application.main_window import MainWindow
 
 class ApplicationLayer:
@@ -12,7 +12,7 @@ class ApplicationLayer:
         frame = Frame()
 
         frame.message = data["message"]
-        frame.algorithm = data["algorithm"]
+        frame.algorithm = Algorithm(data["algorithm"])
         frame.destination_port = data["port"]
         frame.ber = data["ber"]
 

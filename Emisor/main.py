@@ -1,6 +1,6 @@
 from application import ApplicationLayer
 from presentation import PresentationLayer
-#from link import LinkLayer
+from link import LinkLayer
 #from noise import NoiseLayer
 #from transport import SocketClient
 
@@ -9,6 +9,7 @@ def main():
 
     app = ApplicationLayer()
     presentation = PresentationLayer()
+    link = LinkLayer()
 
     frame = app.request_message()
 
@@ -16,12 +17,17 @@ def main():
         return
 
     frame = presentation.encode(frame)
+    frame.metadata["ascii"] = frame.payload
+
+    frame = link.add_integrity(frame)
 
     print("\n===== FRAME =====")
-    print("Mensaje:")
-    print(frame.message)
-    print("\nPayload:")
-    print(frame.payload)
+    print(f"Mensaje    : {frame.message}")
+    print(f"Algoritmo  : {frame.algorithm.value}")
+    print(f"Puerto     : {frame.destination_port}")
+    print(f"BER        : {frame.ber}")
+    print(f"Payload    : {frame.payload}")
+    print(f"Integridad : {frame.integrity}")
 
 if __name__ == "__main__":
     main()

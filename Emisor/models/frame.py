@@ -9,7 +9,7 @@ class Algorithm(Enum):
 class Frame:
     #info ingresada por el usuario
     message: str = ""
-    algorithm: str = ""
+    algorithm: Algorithm = Algorithm.CRC32
     #destino
     destination_port: int = 5000
     #probabilidad de error
