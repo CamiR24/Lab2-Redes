@@ -18,5 +18,7 @@ class NoiseLayer:
         frame.metadata["payload_after_noise"] = noisy_payload
         frame.metadata["flipped_bits"] = flipped_bits
         frame.payload = noisy_payload
+        frame.metadata["payload_length"] = len(frame.payload)
+        frame.metadata["ber"] = frame.ber
 
         return frame

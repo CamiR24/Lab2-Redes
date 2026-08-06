@@ -2,15 +2,15 @@ from application import ApplicationLayer
 from presentation import PresentationLayer
 from link import LinkLayer
 from noise import NoiseLayer
-#from transport import SocketClient
+from transport import SocketClient
 
-#main para application, presentation, link y noise
 def main():
 
     app = ApplicationLayer()
     presentation = PresentationLayer()
     link = LinkLayer()
     noise = NoiseLayer()
+    transport = SocketClient()
 
     frame = app.request_message()
 
@@ -33,6 +33,8 @@ def main():
     print(f"Integridad           : {frame.integrity}")
     print(f"Payload con ruido    : {frame.payload}")
     print(f"Bits modificados     : {frame.metadata["flipped_bits"]}")
+
+    transport.send(frame)
 
 if __name__ == "__main__":
     main()
