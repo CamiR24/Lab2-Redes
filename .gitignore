@@ -1,0 +1,12 @@
+# Python (Emisor)
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Java (Receptor)
+Receptor/out/
+*.class
+
+# macOS
+.DS_Store

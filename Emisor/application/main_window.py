@@ -64,13 +64,13 @@ class MainWindow:
         self.message.pack(fill="x", pady=(0, 20))
 
         self.create_label(container, "Algoritmo")
-        self.algorithm = ctk.CTkComboBox(container,values=["CRC32"],state="readonly",corner_radius=12,border_width=2,border_color=BORDER,fg_color=ENTRY_BG,button_color=BORDER,button_hover_color="#38BDF8",dropdown_fg_color="white",text_color=TEXT,font=ENTRY_FONT)
+        self.algorithm = ctk.CTkComboBox(container,values=["CRC32", "HAMMING"],state="readonly",corner_radius=12,border_width=2,border_color=BORDER,fg_color=ENTRY_BG,button_color=BORDER,button_hover_color="#38BDF8",dropdown_fg_color="white",text_color=TEXT,font=ENTRY_FONT)
         self.algorithm.set("CRC32")
         self.algorithm.pack(fill="x", pady=(0, 20))
 
         self.create_label(container, "Puerto")
         self.port = ctk.CTkEntry(container,corner_radius=12,border_width=2,border_color=BORDER,fg_color=ENTRY_BG,text_color=TEXT,font=ENTRY_FONT)
-        self.port.insert(0, "5000")
+        self.port.insert(0, "5050")
         self.port.pack(fill="x", pady=(0, 20))
 
         self.create_label(container, "BER (Bit Error Rate)")

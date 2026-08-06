@@ -3,6 +3,7 @@ from enum import Enum
 
 class Algorithm(Enum):
     CRC32 = "CRC32"
+    HAMMING = "HAMMING"
 
 # todas las capas reciben el mismo objeto y solamente modifican el atributo que les corresponde
 @dataclass
@@ -16,7 +17,7 @@ class Frame:
     ber: float = 0.0
     #trama binaria que va evolucionando
     payload: str = ""
-    #información de integridad CRC32
+    #información de integridad (CRC32 o bits de paridad de Hamming)
     integrity: str = ""
     #Info adicional
     metadata: dict = field(default_factory=dict)
