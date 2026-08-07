@@ -53,10 +53,21 @@ public class LinkLayer {
 
         String data = rest.substring(0, rest.length() - integrityLength);
         String receivedIntegrity = rest.substring(rest.length() - integrityLength);
-        String recalculated = crc32.calculate(data);
 
         frame.dataBits = data;
         frame.receivedIntegrity = receivedIntegrity;
+
+        if (data.length() % 8 != 0) {
+            // Esto puede pasar si el ruido corrompió la cabecera y una trama
+            // de otro algoritmo se interpretó por error como CRC32.
+            frame.corrupted = true;
+            frame.corrected = false;
+            frame.errorDetail = "Trama inválida para CRC32 (datos no alineados a bytes; " +
+                    "probablemente el ruido corrompió la cabecera).";
+            return frame;
+        }
+
+        String recalculated = crc32.calculate(data);
 
         if (recalculated.equals(receivedIntegrity)) {
             frame.corrupted = false;
